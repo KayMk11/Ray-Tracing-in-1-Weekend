@@ -1,9 +1,12 @@
 #pragma once
+#include "material.h"
 
+class material;
 struct hitrecord
 {
     vec3 position;
     vec3 normal;
+    shared_ptr<material> mat;
     double t;
     bool frontface;
 

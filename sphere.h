@@ -7,9 +7,12 @@ class sphere : public hittable
 private:
     vec3 mCenter;
     float mRadius;
+    shared_ptr<material> mat;
 
 public:
-    sphere(const vec3 &center, float radius) : mCenter(center), mRadius(radius) {}
+    sphere(const vec3 &center, float radius) : mCenter(center), mRadius(radius)
+    {
+    }
     virtual bool hit(const ray &r, interval ray_t, hitrecord &record) const override
     {
         vec3 oc = mCenter - r.origin();
@@ -36,6 +39,7 @@ public:
         record.position = r.at(root);
         vec3 normal = (record.position - mCenter) / mRadius;
         record.setNormal(r, normal);
+        record.mat = mat;
         return true;
     }
 };

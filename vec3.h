@@ -49,3 +49,33 @@ inline vec3 cross(const vec3 &u, const vec3 &v)
                 u.x * v.y - u.y * v.x);
 }
 inline vec3 unit(const vec3 &v) { return v / v.length(); }
+
+inline vec3 random_vec3() { return vec3(random_float(), random_float(), random_float()); }
+
+inline vec3 random_vec3(float min, float max)
+{
+    return vec3(random_float(min, max),
+                random_float(min, max),
+                random_float(min, max));
+}
+
+inline vec3 random_in_unit_sphere()
+{
+    while (true)
+    {
+        auto p = random_vec3(-1, 1);
+        if (p.length_squared() < 1) // if we are going to normalise this vector anyway, why is this required?
+            return p;
+    }
+}
+
+inline vec3 random_unit_vector() { return unit(random_in_unit_sphere()); }
+
+inline vec3 random_on_hemisphere(const vec3 &normal)
+{
+    vec3 on_unit_sphere = random_unit_vector();
+    if (dot(on_unit_sphere, normal) > 0, 0)
+        return on_unit_sphere;
+    else
+        return -on_unit_sphere;
+}
