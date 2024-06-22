@@ -91,3 +91,10 @@ inline vec3 reflect(const vec3 &vec, const vec3 &normal)
 {
     return vec - 2 * dot(vec, normal) * normal;
 }
+inline vec3 refract(const vec3 &r_in, const vec3 &normal, float refractive_index_ratio)
+{
+    auto cos_theta = fminf(dot(-r_in, normal), 1.0); // do we need fminf
+    vec3 r_out_perp = refractive_index_ratio * (r_in + cos_theta * normal);
+    vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * normal;
+    return r_out_parallel + r_out_perp;
+}
