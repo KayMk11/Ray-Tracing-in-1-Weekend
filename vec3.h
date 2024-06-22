@@ -33,11 +33,18 @@ public:
     vec3 &operator/=(float t) { return *this *= 1 / t; }
     float length() const { return sqrt(length_squared()); }
     float length_squared() const { return x * x + y * y + z * z; }
+
+    bool near_zero() const
+    {
+        auto s = 1e-8;
+        return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
+    }
 };
 
 inline std::ostream &operator<<(std::ostream &out, const vec3 &v) { return out << v.x << ' ' << v.y << ' ' << v.z; }
 inline vec3 operator+(const vec3 &a, const vec3 &b) { return vec3(a.x + b.x, a.y + b.y, a.z + b.z); }
 inline vec3 operator-(const vec3 &a, const vec3 &b) { return vec3(a.x - b.x, a.y - b.y, a.z - b.z); }
+inline vec3 operator*(const vec3 &u, const vec3 &v) { return vec3(v.x * u.x, v.y * u.y, v.z * u.z); }
 inline vec3 operator*(float t, const vec3 &v) { return vec3(v.x * t, v.y * t, v.z * t); }
 inline vec3 operator*(const vec3 &v, float t) { return t * v; }
 inline vec3 operator/(const vec3 &v, float t) { return (1.0f / t) * v; }
@@ -78,4 +85,9 @@ inline vec3 random_on_hemisphere(const vec3 &normal)
         return on_unit_sphere;
     else
         return -on_unit_sphere;
+}
+
+inline vec3 reflect(const vec3 &vec, const vec3 &normal)
+{
+    return vec - 2 * dot(vec, normal) * normal;
 }

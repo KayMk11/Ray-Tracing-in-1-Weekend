@@ -10,7 +10,7 @@ private:
     shared_ptr<material> mat;
 
 public:
-    sphere(const vec3 &center, float radius) : mCenter(center), mRadius(radius)
+    sphere(const vec3 &center, float radius, shared_ptr<material> mat) : mCenter(center), mRadius(radius), mat(mat)
     {
     }
     virtual bool hit(const ray &r, interval ray_t, hitrecord &record) const override

@@ -17,7 +17,7 @@ void write_color(std::ostream &out, const color &pixel_color)
 
     r = linear_to_gamma(r);
     g = linear_to_gamma(g);
-    b = linear_to_gamma(r);
+    b = linear_to_gamma(b);
 
     static const interval intensity(0.0, 0.999);
     out << int(255.999 * intensity.clamp(r)) << ' '

@@ -1,5 +1,4 @@
 #pragma once
-#include "material.h"
 
 class material;
 struct hitrecord
