@@ -21,10 +21,26 @@ int main()
     world.add(make_shared<sphere>(vec3(-1.0, 0, -1.0), .4, material_bubble));
     world.add(make_shared<sphere>(vec3(1.0, 0, -1.0), .5, material_right));
 
+    // auto R = cos(PI / 4);
+
+    // auto material_left = make_shared<lambertian>(color(0, 0, 1));
+    // auto material_right = make_shared<lambertian>(color(1, 0, 0));
+
+    // world.add(make_shared<sphere>(vec3(-R, 0, -1), R, material_left));
+    // world.add(make_shared<sphere>(vec3(R, 0, -1), R, material_right));
     camera cam;
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 400;
     cam.samples_per_pixel = 100;
     cam.max_depth = 50;
+
+    cam.vfov = 20;
+    cam.lookfrom = vec3(-2, 2, 1);
+    cam.lookat = vec3(0, 0, -1);
+    cam.vup = vec3(0, 1, 0);
+
+    cam.defocus_angle = 10.0;
+    cam.focus_dist = 3.4;
+
     cam.render(world);
 }

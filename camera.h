@@ -11,6 +11,14 @@ public:
     int samples_per_pixel = 10;
     int max_depth = 10;
 
+    float vfov = 90;
+    vec3 lookfrom = vec3(0, 0, 0);
+    vec3 lookat = vec3(0, 0, -1);
+    vec3 vup = vec3(0, 1, 0);
+
+    float defocus_angle = 0;
+    float focus_dist = 10;
+
     void render(const hittable &world)
     {
         initialize();
@@ -42,6 +50,9 @@ private:
     vec3 pixel00_loc;
     vec3 pixel_delta_u;
     vec3 pixel_delta_v;
+    vec3 u, v, w;
+    vec3 defocus_disk_u;
+    vec3 defocus_disk_v;
 
     void initialize()
     {
@@ -50,20 +61,29 @@ private:
 
         pixel_sample_scale = 1.0 / samples_per_pixel;
 
-        camera_center = vec3(0, 0, 0);
+        camera_center = lookfrom;
 
-        float focal_length = 1.0f;
-        float viewport_height = 2.0f;
+        auto theta = to_radians(vfov);
+        auto h = tan(theta / 2);
+        float viewport_height = 2 * h * focus_dist;
         float viewport_width = viewport_height * (float(image_width) / image_height);
 
-        vec3 viewport_u(viewport_width, 0, 0);
-        vec3 viewport_v(0, -viewport_height, 0);
+        w = unit(lookfrom - lookat);
+        u = unit(cross(vup, w));
+        v = cross(w, u);
+
+        vec3 viewport_u = viewport_width * u;
+        vec3 viewport_v = -viewport_height * v;
 
         pixel_delta_u = viewport_u / image_width;
         pixel_delta_v = viewport_v / image_height;
 
-        vec3 viewport_upper_left = camera_center - vec3(0, 0, focal_length) - viewport_u / 2 - viewport_v / 2;
+        vec3 viewport_upper_left = camera_center - (focus_dist * w) - viewport_u / 2 - viewport_v / 2;
         pixel00_loc = viewport_upper_left + .5 * (pixel_delta_u + pixel_delta_v);
+
+        auto defocus_radius = focus_dist * tan(to_radians(defocus_angle / 2));
+        defocus_disk_u = u * defocus_radius;
+        defocus_disk_v = v * defocus_radius;
     }
 
     ray get_ray(int i, int j) const
@@ -72,10 +92,17 @@ private:
         auto pixel_sample = pixel00_loc +
                             ((i + offset.x) * pixel_delta_u) +
                             ((j + offset.y) * pixel_delta_v);
-        auto ray_origin = camera_center;
+        auto ray_origin = (defocus_angle <= 0) ? camera_center : defocus_disk_sample();
         auto ray_direction = pixel_sample - ray_origin;
 
         return ray(ray_origin, ray_direction);
+    }
+
+    vec3 defocus_disk_sample() const
+    {
+        // Returns a random point in the camera defocus disk.
+        auto p = random_in_unit_disk();
+        return camera_center + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
     }
 
     vec3 sample_square() const
