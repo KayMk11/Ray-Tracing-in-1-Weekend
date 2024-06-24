@@ -62,7 +62,7 @@ int main()
     cam.max_depth = 50;
 
     cam.vfov = 20;
-    cam.lookfrom = vec3(-13, 2, 3);
+    cam.lookfrom = vec3(13, 2, 3);
     cam.lookat = vec3(0, 0, 0);
     cam.vup = vec3(0, 1, 0);
 
